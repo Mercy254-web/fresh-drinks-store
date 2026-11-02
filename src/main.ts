@@ -187,31 +187,34 @@ if (app) {
       <p id="order-message"></p>
     </section>
 
-    <section id="contact">
-      <h2>Contact Us</h2>
-      <form id="contact-form">
-        <input
-          id="customer-name"
-          type="text"
-          placeholder="Your name"
-          required
-        >
-        <input
-          id="customer-email"
-          type="email"
-          placeholder="Your email"
-          required
-        >
-        <textarea
-          id="customer-message"
-          placeholder="Your message"
-          required
-        ></textarea>
-        <button type="submit">Send Message</button>
-      </form>
-      <p id="contact-result"></p>
-    </section>
+   <section id="contact">
+  <h2>Get In Touch With Us</h2>
 
+  <p class="contact-intro">
+    We're happy to hear from you!
+    Contact us for enquiries, orders or assistance.
+  </p>
+
+  <div class="contact-card">
+    <h3>Fresh Drinks Store</h3>
+
+    <p class="contact-number">📞 0701521517</p>
+
+    <div class="contact-actions">
+      <a href="tel:+254701521517" class="contact-button">
+        📞 Call Us
+      </a>
+
+      <a
+        href="https://wa.me/254701521517"
+        target="_blank"
+        class="contact-button whatsapp-button"
+      >
+        💬 WhatsApp Us
+      </a>
+    </div>
+  </div>
+</section>
     <footer>
       <p>&copy; 2026 Fresh Drinks Store</p>
     </footer>

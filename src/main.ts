@@ -114,6 +114,7 @@ if (app) {
 
     <section id="products">
       <h2>Our Drinks</h2>
+
       <div class="products">
         ${drinks.map(drink => `
           <article class="product">
@@ -122,11 +123,14 @@ if (app) {
               alt="${drink.name}"
               onerror="this.style.display='none'"
             >
+
             <h3>${drink.name}</h3>
+
             ${
               drink.sizes
                 ? `
                   <label for="size-${drink.id}">Choose size:</label>
+
                   <select id="size-${drink.id}" class="size-select">
                     ${drink.sizes.map((option, index) => `
                       <option value="${index}">
@@ -137,6 +141,7 @@ if (app) {
                 `
                 : `<p class="price">KSh ${drink.price}</p>`
             }
+
             <button class="add-to-cart" data-id="${drink.id}">
               Add to Cart
             </button>
@@ -151,6 +156,7 @@ if (app) {
 
       <form id="order-form">
         <label for="customer-full-name">Full Name:</label>
+
         <input
           id="customer-full-name"
           type="text"
@@ -159,6 +165,7 @@ if (app) {
         >
 
         <label for="customer-phone">Phone Number:</label>
+
         <input
           id="customer-phone"
           type="tel"
@@ -167,13 +174,38 @@ if (app) {
         >
 
         <label for="delivery-address">Delivery Address:</label>
+
         <textarea
           id="delivery-address"
           placeholder="Enter your delivery address"
           required
         ></textarea>
 
-        <button type="submit">Place Order on WhatsApp</button>
+        <h3>Choose Payment Method</h3>
+
+        <div class="payment-options">
+          <label>
+            <input
+              type="radio"
+              name="payment-method"
+              value="M-Pesa"
+              required
+            >
+            M-Pesa
+          </label>
+
+          <label>
+            <input
+              type="radio"
+              name="payment-method"
+              value="Pay on Delivery"
+              required
+            >
+            Pay on Delivery
+          </label>
+        </div>
+
+        <button type="submit">Place Order</button>
       </form>
 
       <p id="order-form-message"></p>
@@ -181,40 +213,44 @@ if (app) {
 
     <section id="cart">
       <h2>Your Shopping Cart 🛒</h2>
+
       <div id="cart-items">Your cart is empty.</div>
+
       <h3 id="cart-total">Total: KSh 0</h3>
-      <button id="checkout">Generate Receipt</button>
+
       <p id="order-message"></p>
     </section>
 
-   <section id="contact">
-  <h2>Get In Touch With Us</h2>
+    <section id="contact">
+      <h2>Get In Touch With Us</h2>
 
-  <p class="contact-intro">
-    We're happy to hear from you!
-    Contact us for enquiries, orders or assistance.
-  </p>
+      <p class="contact-intro">
+        We're happy to hear from you!
+        Contact us for enquiries, orders or assistance.
+      </p>
 
-  <div class="contact-card">
-    <h3>Fresh Drinks Store</h3>
+      <div class="contact-card">
+        <h3>Fresh Drinks Store</h3>
 
-    <p class="contact-number">📞 0701521517</p>
+        <p class="contact-number">📞 0701521517</p>
 
-    <div class="contact-actions">
-      <a href="tel:+254701521517" class="contact-button">
-        📞 Call Us
-      </a>
+        <div class="contact-actions">
+          <a href="tel:+254701521517" class="contact-button">
+            📞 Call Us
+          </a>
 
-      <a
-        href="https://wa.me/254701521517"
-        target="_blank"
-        class="contact-button whatsapp-button"
-      >
-        💬 WhatsApp Us
-      </a>
-    </div>
-  </div>
-</section>
+          <a
+            href="https://wa.me/254701521517"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="contact-button whatsapp-button"
+          >
+            💬 WhatsApp Us
+          </a>
+        </div>
+      </div>
+    </section>
+
     <footer>
       <p>&copy; 2026 Fresh Drinks Store</p>
     </footer>
@@ -246,7 +282,9 @@ if (app) {
         return `
           <div class="cart-item">
             <span>${drink.name}${sizeText} × ${item.quantity}</span>
+
             <span>KSh ${item.price * item.quantity}</span>
+
             <button class="remove-item" data-index="${index}">
               Remove
             </button>
@@ -324,156 +362,6 @@ if (app) {
       }
     })
 
-  document.querySelector<HTMLButtonElement>('#checkout')!
-    .addEventListener('click', () => {
-      const message =
-        document.querySelector<HTMLParagraphElement>(
-          '#order-message'
-        )!
-
-      if (cart.length === 0) {
-        message.textContent =
-          'Please add a drink to your cart first.'
-        return
-      }
-
-      const customerName =
-        document.querySelector<HTMLInputElement>(
-          '#customer-full-name'
-        )!.value.trim()
-
-      const customerPhone =
-        document.querySelector<HTMLInputElement>(
-          '#customer-phone'
-        )!.value.trim()
-
-      const deliveryAddress =
-        document.querySelector<HTMLTextAreaElement>(
-          '#delivery-address'
-        )!.value.trim()
-
-      if (!customerName || !customerPhone || !deliveryAddress) {
-        message.textContent =
-          'Please enter customer details before generating the receipt.'
-        document.querySelector('#customer-details')!
-          .scrollIntoView({ behavior: 'smooth' })
-        return
-      }
-
-      const total = getTotal()
-      const receiptWindow = window.open('', '_blank')
-
-      if (!receiptWindow) {
-        message.textContent =
-          'Allow pop-ups in your browser to open your receipt.'
-        return
-      }
-
-      const escapeHTML = (value: string) =>
-        value.replace(/[&<>"']/g, character => ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#39;'
-        })[character]!)
-
-      const receiptItems = cart.map(item => {
-        const drink = drinks.find(d => d.id === item.id)!
-
-        return `
-          <tr>
-            <td>${escapeHTML(drink.name)}</td>
-            <td>${escapeHTML(item.size)}</td>
-            <td>${item.quantity}</td>
-            <td>KSh ${item.price}</td>
-            <td>KSh ${item.price * item.quantity}</td>
-          </tr>
-        `
-      }).join('')
-
-      receiptWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Fresh Drinks Store Receipt</title>
-          <meta name="viewport" content="width=device-width, initial-scale=1">
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              padding: 25px;
-              line-height: 1.5;
-              color: #222;
-            }
-            h1, .thanks { text-align: center; }
-            .customer-details {
-              margin-top: 25px;
-              padding: 15px;
-              background: #f2f2f2;
-              overflow-wrap: anywhere;
-            }
-            table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-top: 25px;
-            }
-            th, td {
-              border: 1px solid #ccc;
-              padding: 8px;
-              text-align: left;
-            }
-            .total {
-              text-align: right;
-              font-size: 20px;
-              font-weight: bold;
-            }
-            button {
-              display: block;
-              margin: 25px auto;
-              padding: 12px 20px;
-              cursor: pointer;
-            }
-            @media print {
-              button { display: none; }
-              body { padding: 0; }
-            }
-          </style>
-        </head>
-        <body>
-          <h1>Fresh Drinks Store</h1>
-          <p class="thanks">Thank you for shopping with us!</p>
-          <p>Receipt date: ${new Date().toLocaleString()}</p>
-
-          <div class="customer-details">
-            <h3>Customer Details</h3>
-            <p><strong>Name:</strong> ${escapeHTML(customerName)}</p>
-            <p><strong>Phone:</strong> ${escapeHTML(customerPhone)}</p>
-            <p><strong>Delivery Address:</strong> ${escapeHTML(deliveryAddress)}</p>
-          </div>
-
-          <h3>Order Details</h3>
-          <table>
-            <tr>
-              <th>Drink</th>
-              <th>Size</th>
-              <th>Qty</th>
-              <th>Unit Price</th>
-              <th>Subtotal</th>
-            </tr>
-            ${receiptItems}
-          </table>
-
-          <p class="total">Total: KSh ${total}</p>
-          <button onclick="window.print()">Print Receipt</button>
-        </body>
-        </html>
-      `)
-
-      receiptWindow.document.close()
-      message.textContent =
-        'Your receipt has been generated successfully!'
-    })
-
   document.querySelector<HTMLFormElement>('#order-form')!
     .addEventListener('submit', async event => {
       event.preventDefault()
@@ -486,6 +374,7 @@ if (app) {
       if (cart.length === 0) {
         formMessage.textContent =
           'Please add drinks to your cart before placing an order.'
+
         return
       }
 
@@ -504,11 +393,26 @@ if (app) {
           '#delivery-address'
         )!.value.trim()
 
+      const selectedPayment =
+        document.querySelector<HTMLInputElement>(
+          'input[name="payment-method"]:checked'
+        )
+
       if (!customerName || !customerPhone || !deliveryAddress) {
         formMessage.textContent =
           'Please complete all customer details.'
+
         return
       }
+
+      if (!selectedPayment) {
+        formMessage.textContent =
+          'Please select a payment method.'
+
+        return
+      }
+
+      const paymentMethod = selectedPayment.value
 
       const total = getTotal()
 
@@ -516,6 +420,7 @@ if (app) {
         customer_name: customerName,
         customer_phone: customerPhone,
         delivery_address: deliveryAddress,
+        payment_method: paymentMethod,
         items: cart.map(item => {
           const drink = drinks.find(d => d.id === item.id)!
 
@@ -549,18 +454,20 @@ ${orderItems}
 
 TOTAL: KSh ${total}
 
+PAYMENT METHOD: ${paymentMethod}
+
 Please confirm this order.
       `.trim()
 
       const whatsappURL =
         `https://wa.me/254701521517?text=${encodeURIComponent(whatsappMessage)}`
 
-      // Open a window immediately so the browser is less likely to block it.
       const whatsappWindow = window.open('about:blank', '_blank')
 
       if (!whatsappWindow) {
         formMessage.textContent =
           'Please allow pop-ups in your browser, then place the order again.'
+
         return
       }
 
@@ -586,6 +493,7 @@ Please confirm this order.
 
         formMessage.textContent =
           `Order #${result.order_id} saved successfully. Opening WhatsApp...`
+
       } catch (error) {
         console.error('Database order error:', error)
 
@@ -593,18 +501,7 @@ Please confirm this order.
           'Could not save the order to the database. Opening WhatsApp so you can still send your order.'
       }
 
-      // Continue to WhatsApp whether or not the database request succeeds.
       whatsappWindow.location.href = whatsappURL
-    })
-
-  document.querySelector<HTMLFormElement>('#contact-form')!
-    .addEventListener('submit', event => {
-      event.preventDefault()
-
-      document.querySelector<HTMLParagraphElement>(
-        '#contact-result'
-      )!.textContent =
-        'Thank you for contacting Fresh Drinks Store!'
     })
 
   updateCart()
